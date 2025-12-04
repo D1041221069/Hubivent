@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 // For Android Emulator use: http://10.0.2.2:3000
 // For iOS Simulator use: http://localhost:3000
 // For Physical Device use: http://YOUR_PC_IP:3000
-const BASE_URL = 'http://localhost:4000';
+const BASE_URL = 'https://31b820d86520.ngrok-free.app/';
 
 const client = axios.create({
     baseURL: BASE_URL,

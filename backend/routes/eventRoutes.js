@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { pool } from '../db/config.js';
+import { upload } from '../middleware/uploadMiddleware.js';
 
 const router = Router();
 
@@ -10,9 +11,9 @@ const router = Router();
 router.get('/', async (_req, res) => {
   try {
     const [rows] = await pool.query(`
-      SELECT event_id, title, description, category, event_date, location, created_at, updated_at
+      SELECT event_id, title, description, category, start_date, end_date , location, image_url, created_at, updated_at
       FROM events
-      ORDER BY event_date ASC
+      ORDER BY start_date ASC
     `);
     res.json(rows);
   } catch (error) {
@@ -44,7 +45,7 @@ router.get('/:id', async (req, res) => {
  * POST /events
  * Membuat event baru (ADMIN)
  */
-router.post('/', async (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
   try {
     const {
       event_id,
@@ -56,6 +57,8 @@ router.post('/', async (req, res) => {
       location
     } = req.body;
 
+    const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+
     if (!event_id || !title || !start_date || !end_date || !location) {
       return res.status(400).json({ message: 'event_id, title, start_date, end_date, location are required' });
     }
@@ -63,13 +66,13 @@ router.post('/', async (req, res) => {
     await pool.query(
       `
       INSERT INTO events 
-      (event_id, title, description, category, start_date, end_date, location) 
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      (event_id, title, description, category, start_date, end_date, location, image_url) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `,
-      [event_id, title, description, category, start_date, end_date, location]
+      [event_id, title, description, category, start_date, end_date, location, image_url]
     );
 
-    res.status(201).json({ ok: true });
+    res.status(201).json({ ok: true, image_url });
   } catch (error) {
     console.error('POST /events error:', error);
     res.status(500).json({ message: 'Failed to create event' });
@@ -80,7 +83,7 @@ router.post('/', async (req, res) => {
  * PUT /events/:id
  * Update event
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', upload.single('image'), async (req, res) => {
   try {
     const fields = [
       'title',
@@ -99,6 +102,11 @@ router.put('/:id', async (req, res) => {
         set.push(`${f}=?`);
         values.push(req.body[f]);
       }
+    }
+
+    if (req.file) {
+      set.push('image_url=?');
+      values.push(`/uploads/${req.file.filename}`);
     }
 
     if (!set.length) return res.status(400).json({ message: 'No changes to update' });
@@ -140,3 +148,4 @@ router.delete('/:id', async (req, res) => {
 });
 
 export default router;
+

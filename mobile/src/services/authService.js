@@ -1,6 +1,5 @@
 import axios from "axios";
-import { API_BASE } from "../config/env";
-import { API_ENDPOINTS } from "../api/endpoints";
+import { API_BASE, API_ENDPOINTS } from "../api/endpoints";
 
 export const login = async (email, password) => {
     return axios.post(API_BASE + API_ENDPOINTS.AUTH.LOGIN, {
@@ -12,5 +11,3 @@ export const register = async (name, email, password) => {
         name, email, password
     });
 }
-
-login();

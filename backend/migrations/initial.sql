@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS events (
     event_id VARCHAR(36) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT NULL,
+    image_url VARCHAR(255) NULL,
     category VARCHAR(64) NULL DEFAULT 'Umum',
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
