@@ -13,6 +13,7 @@ async function runMigration() {
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
       port: process.env.DB_PORT,
+      multipleStatements: true
     });
 
     await conn.query(sql);
