@@ -25,7 +25,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function loadAuth() {
       try {
-        console.log('🔄 Loading saved auth data...');
         const isSecureStoreAvailable = await SecureStore.isAvailableAsync();
 
         if (isSecureStoreAvailable) {
@@ -33,19 +32,16 @@ export function AuthProvider({ children }) {
           const storedUser = await SecureStore.getItemAsync(USER_KEY);
 
           if (storedToken && storedUser) {
-            console.log('✅ Auth data found, auto-login...');
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
           } else {
             console.log('ℹ️ No saved auth data found');
           }
         } else {
-          console.log('⚠️ SecureStore not available, using localStorage fallback');
           const storedToken = localStorage.getItem(TOKEN_KEY);
           const storedUser = localStorage.getItem(USER_KEY);
 
           if (storedToken && storedUser) {
-            console.log('✅ Auth data found in localStorage');
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
           }
@@ -64,7 +60,6 @@ export function AuthProvider({ children }) {
   // Login function
   const login = async (newToken, userData) => {
     try {
-      console.log('💾 Saving auth data...');
       const isSecureStoreAvailable = await SecureStore.isAvailableAsync();
 
       if (isSecureStoreAvailable) {
@@ -77,11 +72,8 @@ export function AuthProvider({ children }) {
 
       setToken(newToken);
       setUser(userData);
-
-      console.log('✅ Auth data saved');
       return { success: true };
     } catch (error) {
-      console.error('❌ Error saving auth data:', error);
       return { success: false, error: error.message };
     }
   };
@@ -89,7 +81,6 @@ export function AuthProvider({ children }) {
   // Register function
   const register = async (newToken, userData) => {
     try {
-      console.log('💾 Saving registration data...');
       const isSecureStoreAvailable = await SecureStore.isAvailableAsync();
 
       if (isSecureStoreAvailable) {
@@ -102,8 +93,6 @@ export function AuthProvider({ children }) {
 
       setToken(newToken);
       setUser(userData);
-
-      console.log('✅ Registration data saved');
       return { success: true };
     } catch (error) {
       console.error('❌ Error saving registration data:', error);
@@ -114,7 +103,6 @@ export function AuthProvider({ children }) {
   // Logout function
   const logout = async () => {
     try {
-      console.log('👋 Logging out...');
       const isSecureStoreAvailable = await SecureStore.isAvailableAsync();
 
       if (isSecureStoreAvailable) {
@@ -128,7 +116,6 @@ export function AuthProvider({ children }) {
       setToken(null);
       setUser(null);
 
-      console.log('✅ Logged out, redirecting to login...');
       router.replace('/(auth)/login');
     } catch (error) {
       console.error('❌ Logout failed:', error);

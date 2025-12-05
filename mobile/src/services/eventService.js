@@ -8,7 +8,8 @@ export const attendance = async (eventId, scanned_at) => {
 }
 
 export const getAllEvents = async () => {
-    return client.get(API_ENDPOINTS.ADMIN.GET_EVENTS);
+    const response = await client.get(API_ENDPOINTS.ADMIN.GET_EVENTS);
+    return response.data;
 }
 
 export const createEvent = async (eventData) => {

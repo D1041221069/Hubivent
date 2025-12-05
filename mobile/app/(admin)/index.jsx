@@ -19,8 +19,7 @@ export default function AdminDashboard() {
     const fetchEvents = async () => {
         try {
             setLoading(true);
-            const response = await getAllEvents();
-            const data = response.data || [];
+            const data = await getAllEvents() || [];
             setEvents(data);
             setFilteredEvents(data);
             console.log(data);
