@@ -5,7 +5,9 @@
   "scripts": {
     "start": "nodemon server.js",
     "db": "mysql -u root -p < migrations/initial.sql",
-    "db:seeder": "mysql -u root -p < migrations/seed.sql"
+    "db:seeder": "mysql -u root -p < migrations/seed.sql",
+    "prod:db": "node scripts/runMigration.js",
+    "prod:db:seeder": "node scripts/runSeeder.js"
   },
   "author": "",
   "license": "ISC",
