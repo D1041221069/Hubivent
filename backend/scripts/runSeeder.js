@@ -4,7 +4,7 @@ import path from "path";
 
 async function runSeeder() {
   try {
-    const sqlPath = path.join("migrations", "seed.sql");
+    const sqlPath = path.join("migrations", "prod_seed.sql");
     const sql = fs.readFileSync(sqlPath, "utf-8");
 
     const conn = await mysql.createConnection({

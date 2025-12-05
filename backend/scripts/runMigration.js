@@ -4,7 +4,7 @@ import path from "path";
 
 async function runMigration() {
   try {
-    const sqlPath = path.join("migrations", "initial.sql");
+    const sqlPath = path.join("migrations", "prod_initial.sql");
     const sql = fs.readFileSync(sqlPath, "utf-8");
 
     const conn = await mysql.createConnection({
