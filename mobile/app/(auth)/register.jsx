@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { useRouter, Link } from 'expo-router';
-import { useAuth } from '../../src/contexts/authContext';
+import { Link, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import client from '../../src/api/client';
 import { API_ENDPOINTS } from '../../src/api/endpoints';
+import { useAuth } from '../../src/contexts/authContext';
 
 export default function Register() {
     const [username, setUsername] = useState('');
@@ -157,12 +157,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#f9f9f9',
     },
     button: {
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#F4B400',
         padding: 16,
         borderRadius: 12,
         alignItems: 'center',
         marginTop: 20,
-        shadowColor: '#4CAF50',
+        shadowColor: '#F4B400',
         shadowOffset: {
             width: 0,
             height: 4,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     link: {
-        color: '#4CAF50',
+        color: '#F4B400',
         fontWeight: 'bold',
         fontSize: 14,
     },

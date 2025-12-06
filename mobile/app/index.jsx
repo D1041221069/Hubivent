@@ -5,12 +5,12 @@ import { Redirect } from 'expo-router';
 
 export default function Index() {
   const { isAuthenticated, isLoading, user } = useAuth();
-  useEffect(() => {
-    console.log('=== INDEX.JSX DEBUG ===');
-    console.log('isLoading:', isLoading);
-    console.log('isAuthenticated:', isAuthenticated);
-    console.log('user:', user);
-  }, [isLoading, isAuthenticated, user]);
+  // useEffect(() => {
+  //   console.log('=== INDEX.JSX DEBUG ===');
+  //   console.log('isLoading:', isLoading);
+  //   console.log('isAuthenticated:', isAuthenticated);
+  //   console.log('user:', user);
+  // }, [isLoading, isAuthenticated, user]);
 
   if (isLoading) {
     return (

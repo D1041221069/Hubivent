@@ -9,7 +9,7 @@ import { useSearch } from '../../src/contexts/SearchContext';
 import { attendance, bookmark, getUserEvents, unbookmark } from '../../src/services/userService';
 import { dashboardStyles as styles } from './styles';
 
-export default function HomeTab() {
+export default function SavedTab() {
     const navigation = useNavigation();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -100,17 +100,17 @@ export default function HomeTab() {
     const handleBarCodeScanned = async ({ type, data }) => {
         setScanned(true);
         setIsScanning(false);
-        try {
-            // Verify if scanned ID matches selectedEventId if strictly joining a specific event
-            if (selectedEventId && data !== selectedEventId) {
-                Alert.alert("Invalid QR", "This QR code does not match the selected event.");
-                return;
-            }
 
+        if (selectedEventId && data !== selectedEventId) {
+            Alert.alert("Invalid QR", "This QR code does not match the selected event.");
+            return;
+        }
+
+        try {
             const scannedAt = dayjs().format("YYYY-MM-DD HH:mm:ss");
             await attendance(data, scannedAt);
 
-            // Update local state to show "Joined"
+            // Update local state
             setEvents(prevEvents =>
                 prevEvents.map(event =>
                     event.id === data
@@ -138,7 +138,6 @@ export default function HomeTab() {
     };
 
     const handleGiveFeedback = (item) => {
-        // Usually feedback is for past events, but we'll allow it here as requested
         setSelectedEvent(item);
         setRating(0);
         setReviewText('');
@@ -152,47 +151,44 @@ export default function HomeTab() {
     );
 
     const filteredEvents = events.filter((item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase())
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) && item.bookmarked
     );
 
-    const renderEventCard = ({ item }) => (
-        <View style={styles.cardGrid}>
-            <View style={styles.imageContainer}>
-                <Image source={{ uri: item.image }} style={styles.cardImageGrid} />
-                <TouchableOpacity
-                    style={styles.bookmarkIconOverlay}
-                    onPress={() => handleBookmark(item.id, item.bookmarked)}
-                >
-                    {item.bookmarked ? (
-                        <FontAwesome name="bookmark" size={16} color="black" />
-                    ) : (
-                        <FontAwesome name="bookmark-o" size={16} color="black" />
-                    )}
-                </TouchableOpacity>
-            </View>
-            <View style={styles.cardContentGrid}>
-                <Text style={styles.dateText}>{dayjs(item.date).format('dddd, D MMMM YYYY')}</Text>
-                <Text style={styles.titleText} numberOfLines={1}>{item.title}</Text>
-                <View style={styles.buttonRowGrid}>
+    const renderSavedCard = ({ item }) => (
+        <View style={styles.cardList}>
+            <Image source={{ uri: item.image }} style={styles.cardImageList} />
+            <View style={styles.cardContentList}>
+                <View style={styles.cardHeaderList}>
+                    <Text style={styles.dateText}>{dayjs(item.date).format('dddd, D MMMM YYYY')}</Text>
+                    <TouchableOpacity onPress={() => handleBookmark(item.id, item.bookmarked)}>
+                        {item.bookmarked ? (
+                            <FontAwesome name="bookmark" size={16} color="black" />
+                        ) : (
+                            <FontAwesome name="bookmark-o" size={16} color="black" />
+                        )}
+                    </TouchableOpacity>
+                </View>
+                <Text style={styles.titleText}>{item.title}</Text>
+                <Text style={styles.descText} numberOfLines={2}>{item.desc}</Text>
+                <View style={styles.buttonRowList}>
                     {item.attendance ? (
-                        <View style={[styles.btnGold, { backgroundColor: '#4CAF50', flexDirection: 'row', justifyContent: 'center', gap: 5 }]}>
+                        <View style={[styles.btnGraySmall, { marginRight: 8, flex: 1, backgroundColor: '#4CAF50', flexDirection: 'row', gap: 5, justifyContent: 'center' }]}>
                             <Feather name="check" size={14} color="white" />
                             <Text style={styles.btnTextWhite}>Joined</Text>
                         </View>
                     ) : (
                         <TouchableOpacity
-                            style={styles.btnGold}
+                            style={[styles.btnGraySmall, { marginRight: 8, flex: 1 }]}
                             onPress={() => handleJoin(item)}
                         >
                             <Text style={styles.btnTextWhite}>Join</Text>
                         </TouchableOpacity>
                     )}
-
                     <TouchableOpacity
-                        style={styles.btnGoldOutline}
+                        style={[styles.btnGoldSmall, { flex: 1 }]}
                         onPress={() => handleViewEvent(item)}
                     >
-                        <Text style={styles.btnTextGold}>View Event</Text>
+                        <Text style={styles.btnTextWhite}>View Event</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -224,7 +220,7 @@ export default function HomeTab() {
                                 <Text style={styles.detailMetaText}>{selectedEvent.location || 'Kampus Untan'}</Text>
                             </View>
                             <View style={styles.detailMetaItem}>
-                                <Feather name="clock" size={16} color="#F4B400" />
+                                <Feather name="user" size={16} color="#F4B400" />
                                 <Text style={styles.detailMetaText}>{selectedEvent.time || 'Event Time'}</Text>
                             </View>
                         </View>
@@ -256,7 +252,7 @@ export default function HomeTab() {
     const renderDashboard = () => (
         <View style={{ flex: 1 }}>
             <View style={styles.pageHeader}>
-                <Text style={styles.pageTitle}>Events</Text>
+                <Text style={styles.pageTitle}>Saved Events</Text>
                 <TouchableOpacity style={styles.filterButton}>
                     <Text style={styles.filterText}>Filter</Text>
                     <Feather name="filter" size={18} color="#000" />
@@ -265,10 +261,8 @@ export default function HomeTab() {
             <FlatList
                 data={filteredEvents}
                 keyExtractor={(item) => item.id}
-                renderItem={renderEventCard}
-                numColumns={2}
+                renderItem={renderSavedCard}
                 contentContainerStyle={styles.listContainer}
-                columnWrapperStyle={styles.columnWrapper}
                 showsVerticalScrollIndicator={false}
             />
         </View>
@@ -278,7 +272,6 @@ export default function HomeTab() {
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
             {viewMode === 'dashboard' ? renderDashboard() : renderEventDetail()}
 
-            {/* Camera Modal */}
             <Modal
                 visible={isScanning}
                 animationType="slide"

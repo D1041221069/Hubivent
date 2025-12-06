@@ -1,21 +1,20 @@
-const baseURL = process.env.EXPO_PUBLIC_BACKEND_URL;
 export const API_ENDPOINTS = {
     AUTH: {
-        LOGIN: baseURL + "/auth/login",
-        REGISTER: baseURL + "/auth/register",
+        LOGIN: "/auth/login",
+        REGISTER: "/auth/register",
     },
     USER: {
-        GET_EVENTS: baseURL + "/me/events",
-        FEEDBACK: (eventId) => `${baseURL}/feedback/${eventId}`,
-        ATTENDANCE: (eventId) => `${baseURL}/attendance/${eventId}`,
-        BOOKMARK: (eventId) => `${baseURL}/bookmark/${eventId}`,
-        UNBOOKMARK: (eventId) => `${baseURL}/unbookmark/${eventId}`,
+        GET_EVENTS: "/me/events",
+        FEEDBACK: (id) => `/feedback/${id}`,
+        ATTENDANCE: (id) => `/attendance/${id}`,
+        BOOKMARK: (id) => `/bookmark/${id}`,
+        UNBOOKMARK: (id) => `/unbookmark/${id}`,
     },
     ADMIN: {
-        GET_EVENTS: baseURL + "/events",
-        CREATE_EVENT: baseURL + "/events",
-        UPDATE_EVENT: (eventId) => `${baseURL}/events/${eventId}`,
-        DELETE_EVENT: (eventId) => `${baseURL}/events/${eventId}`,
+        GET_EVENTS: "/events",
+        CREATE_EVENT: "/events",
+        UPDATE_EVENT: (id) => `/events/${id}`,
+        DELETE_EVENT: (id) => `/events/${id}`,
     },
-    GET_EVENTS_BY_ID: (eventId) => `${baseURL}/events/${eventId}`,
+    GET_EVENTS_BY_ID: (id) => `/events/${id}`,
 };

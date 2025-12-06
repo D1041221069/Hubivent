@@ -1,37 +1,78 @@
-import { Tabs } from "expo-router";
-import { AuthProvider } from "../../src/contexts/authContext";
-import { Ionicons } from "@expo/vector-icons";
+// app/(admin)/_layout.jsx
+import { Tabs } from 'expo-router';
+import { StyleSheet } from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
+
+// Warna utama
+const PRIMARY_COLOR = '#E9B741';
+const BACKGROUND_COLOR = '#1D1E24';
 
 export default function AdminLayout() {
-    return (
-        <AuthProvider>
-            <Tabs
-                screenOptions={{
-                    headerShown: false,
-                    tabBarActiveTintColor: "#1E88E5",
-                    tabBarInactiveTintColor: "#999",
-                }}
-            >
-                <Tabs.Screen
-                    name="index"
-                    options={{
-                        title: "Dashboard",
-                        tabBarIcon: ({ color, size }) => (
-                            <Ionicons name="grid-outline" size={size} color={color} />
-                        ),
-                    }}
-                />
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: BACKGROUND_COLOR, // Warna ikon aktif
+        tabBarInactiveTintColor: 'gray',
+        tabBarShowLabel: false,
+        headerShown: false, // Sembunyikan header default
+        tabBarStyle: styles.tabBar,
+      }}
+    >
+      {/* Tombol Kiri: Home/Beranda */}
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="home" size={size} color={color} />
+          ),
+        }}
+      />
 
-                <Tabs.Screen
-                    name="logout"
-                    options={{
-                        title: "Logout",
-                        tabBarIcon: ({ color, size }) => (
-                            <Ionicons name="log-out-outline" size={size} color={color} />
-                        ),
-                    }}
-                />
-            </Tabs>
-        </AuthProvider>
-    );
+      {/* Tombol Tengah: Create Event */}
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: 'Create',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="plus-square" size={size} color={color} />
+          ),
+        }}
+      />
+
+      {/* Tombol Kanan: Profile Admin */}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="settings" size={size} color={color} /> // Menggunakan 'settings' seperti saran sebelumnya
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="edit"
+        options={{
+          href: null,
+        }}
+      />
+    </Tabs>
+  );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: PRIMARY_COLOR,
+    height: 70,
+    borderTopWidth: 0,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 10,
+  }
+});

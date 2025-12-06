@@ -18,11 +18,11 @@ client.interceptors.request.use(
     async (config) => {
         try {
             const token = await SecureStore.getItemAsync('hubivent_auth_token');
-            // Matikan jika tidak menggunakan ngrok
-            config.headers['User-Agent'] = 'Mozilla/5.0';
-            config.headers['Accept'] = 'application/json';
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
+            }
+            else {
+                console.log('No token found');
             }
         } catch (error) {
             console.error('Error getting token:', error);
