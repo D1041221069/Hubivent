@@ -2,15 +2,15 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import dayjs from 'dayjs';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useFocusEffect, useNavigation } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, FlatList, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSearch } from '../../src/contexts/SearchContext';
 import { attendance, bookmark, getUserEvents, unbookmark } from '../../src/services/userService';
-import { dashboardStyles as styles } from './styles';
+import { dashboardStyles as styles } from '../../src/styles/dashboardStyles';
 
 export default function HomeTab() {
-    const navigation = useNavigation();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const { searchQuery } = useSearch();
@@ -30,25 +30,11 @@ export default function HomeTab() {
     const [rating, setRating] = useState(0);
     const [reviewText, setReviewText] = useState('');
 
+    const router = useRouter(); // Replace useNavigation with useRouter for better flow
+
     useEffect(() => {
-        if (viewMode === 'detail') {
-            navigation.setOptions({
-                headerShown: false,
-                tabBarStyle: { display: 'none' }
-            });
-        } else {
-            navigation.setOptions({
-                headerShown: true,
-                tabBarStyle: {
-                    height: 70,
-                    backgroundColor: '#fff',
-                    borderTopWidth: 1,
-                    borderTopColor: '#eee',
-                    paddingBottom: 10,
-                }
-            });
-        }
-    }, [viewMode, navigation]);
+        // Clean up any effects if needed
+    }, []);
 
     const fetchEvents = async () => {
         try {
@@ -128,13 +114,10 @@ export default function HomeTab() {
     };
 
     const handleViewEvent = (item) => {
-        setSelectedEvent(item);
-        setViewMode('detail');
-    };
-
-    const handleBackToDashboard = () => {
-        setViewMode('dashboard');
-        setSelectedEvent(null);
+        router.push({
+            pathname: '/(user)/event-detail',
+            params: { eventData: JSON.stringify(item) }
+        });
     };
 
     const handleGiveFeedback = (item) => {
@@ -199,84 +182,24 @@ export default function HomeTab() {
         </View>
     );
 
-    const renderEventDetail = () => {
-        if (!selectedEvent) return null;
 
-        return (
-            <View style={{ flex: 1, backgroundColor: '#fff' }}>
-                <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-                    {/* Header Image */}
-                    <View style={styles.detailImageContainer}>
-                        <Image source={{ uri: selectedEvent.image }} style={styles.detailImage} />
-                        <TouchableOpacity style={styles.backButton} onPress={handleBackToDashboard}>
-                            <Feather name="arrow-left" size={24} color="#fff" />
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Content */}
-                    <View style={styles.detailContent}>
-                        <Text style={styles.detailDate}>{dayjs(selectedEvent.date).format('dddd, D MMMM YYYY')}</Text>
-                        <Text style={styles.detailTitle}>{selectedEvent.title}</Text>
-
-                        <View style={styles.detailMetaRow}>
-                            <View style={styles.detailMetaItem}>
-                                <Feather name="map-pin" size={16} color="#F4B400" />
-                                <Text style={styles.detailMetaText}>{selectedEvent.location || 'Kampus Untan'}</Text>
-                            </View>
-                            <View style={styles.detailMetaItem}>
-                                <Feather name="clock" size={16} color="#F4B400" />
-                                <Text style={styles.detailMetaText}>{selectedEvent.time || 'Event Time'}</Text>
-                            </View>
-                        </View>
-
-                        <Text style={styles.sectionHeading}>Description</Text>
-                        <Text style={styles.loremText}>
-                            {selectedEvent.desc || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}
-                        </Text>
-                    </View>
-                </ScrollView>
-
-                {/* Floating Action Button for Detail */}
-                <View style={styles.detailFooter}>
-                    {selectedEvent.attendance ? (
-                        <View style={[styles.btnJoinLarge, { backgroundColor: '#4CAF50', flexDirection: 'row', gap: 10, justifyContent: 'center' }]}>
-                            <Feather name="check" size={20} color="white" />
-                            <Text style={styles.btnTextWhiteLarge}>Joined</Text>
-                        </View>
-                    ) : (
-                        <TouchableOpacity style={styles.btnJoinLarge} onPress={() => handleJoin(selectedEvent)}>
-                            <Text style={styles.btnTextWhiteLarge}>Join Now</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </View>
-        );
-    };
-
-    const renderDashboard = () => (
-        <View style={{ flex: 1 }}>
-            <View style={styles.pageHeader}>
-                <Text style={styles.pageTitle}>Events</Text>
-                <TouchableOpacity style={styles.filterButton}>
-                    <Text style={styles.filterText}>Filter</Text>
-                    <Feather name="filter" size={18} color="#000" />
-                </TouchableOpacity>
-            </View>
-            <FlatList
-                data={filteredEvents}
-                keyExtractor={(item) => item.id}
-                renderItem={renderEventCard}
-                numColumns={2}
-                contentContainerStyle={styles.listContainer}
-                columnWrapperStyle={styles.columnWrapper}
-                showsVerticalScrollIndicator={false}
-            />
-        </View>
-    );
 
     return (
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
-            {viewMode === 'dashboard' ? renderDashboard() : renderEventDetail()}
+            <SafeAreaView style={{ flex: 1 }} edges={['left', 'right', 'bottom']}>
+                <View style={styles.pageHeader}>
+                    <Text style={styles.pageTitle}>Events</Text>
+                </View>
+                <FlatList
+                    data={filteredEvents}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderEventCard}
+                    numColumns={2}
+                    contentContainerStyle={[styles.listContainer, { paddingBottom: 120 }]}
+                    columnWrapperStyle={styles.columnWrapper}
+                    showsVerticalScrollIndicator={false}
+                />
+            </SafeAreaView>
 
             {/* Camera Modal */}
             <Modal

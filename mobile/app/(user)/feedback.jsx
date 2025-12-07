@@ -4,8 +4,8 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert, FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSearch } from '../../src/contexts/SearchContext';
-import { bookmark, getUserEvents, unbookmark, giveFeedback } from '../../src/services/userService';
-import { dashboardStyles as styles } from './styles';
+import { bookmark, getUserEvents, giveFeedback, unbookmark } from '../../src/services/userService';
+import { dashboardStyles as styles } from '../../src/styles/dashboardStyles';
 
 export default function FeedbackTab() {
     const [events, setEvents] = useState([]);
@@ -107,10 +107,6 @@ export default function FeedbackTab() {
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
             <View style={styles.pageHeader}>
                 <Text style={styles.pageTitle}>Feedback</Text>
-                <TouchableOpacity style={styles.filterButton}>
-                    <Text style={styles.filterText}>Filter</Text>
-                    <Feather name="filter" size={18} color="#000" />
-                </TouchableOpacity>
             </View>
             <FlatList
                 data={filteredEvents}
@@ -159,7 +155,7 @@ export default function FeedbackTab() {
                         {/* Actions */}
                         <TouchableOpacity
                             style={[styles.submitButton, { opacity: rating > 0 ? 1 : 0.5 }]}
-                            onPress={ async() => {
+                            onPress={async () => {
                                 try {
                                     await giveFeedback(selectedEvent.id, rating, reviewText);
                                     Alert.alert("Success", "Thank you for your feedback!");

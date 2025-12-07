@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { updateEvent } from '../../src/services/eventService';
 
@@ -181,115 +182,117 @@ export default function EditEventScreen() {
     };
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+            <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
 
-            <Text style={styles.headerTitle}>Edit Event</Text>
+                <Text style={styles.headerTitle}>Edit Event</Text>
 
-            {/* Upload Gambar */}
-            <TouchableOpacity style={styles.imageUploadArea} onPress={pickImage}>
-                {image ? (
-                    <Image source={{ uri: image }} style={{ width: '100%', height: '100%', borderRadius: 15 }} />
-                ) : (
-                    <>
-                        <MaterialCommunityIcons name="camera-plus" size={50} color={TEXT_COLOR} />
-                        <Text style={styles.uploadText}>Change picture of event</Text>
-                    </>
+                {/* Upload Gambar */}
+                <TouchableOpacity style={styles.imageUploadArea} onPress={pickImage}>
+                    {image ? (
+                        <Image source={{ uri: image }} style={{ width: '100%', height: '100%', borderRadius: 15 }} />
+                    ) : (
+                        <>
+                            <MaterialCommunityIcons name="camera-plus" size={50} color={TEXT_COLOR} />
+                            <Text style={styles.uploadText}>Change picture of event</Text>
+                        </>
+                    )}
+                </TouchableOpacity>
+
+                {/* Input Nama */}
+                <Text style={styles.inputLabel}>Name of Event</Text>
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="Event Name"
+                    placeholderTextColor={PLACEHOLDER_COLOR}
+                    value={eventName}
+                    onChangeText={setEventName}
+                />
+
+                {/* Input Lokasi */}
+                <Text style={styles.inputLabel}>Location</Text>
+                <TextInput
+                    style={styles.textInput}
+                    placeholder="Location"
+                    placeholderTextColor={PLACEHOLDER_COLOR}
+                    value={location}
+                    onChangeText={setLocation}
+                />
+
+                {/* --- START DATE & TIME --- */}
+                <Text style={styles.sectionLabel}>Start of Event</Text>
+                <View style={styles.dateTimeRow}>
+                    <DateInput
+                        label="Date"
+                        value={formatDate(startDate)}
+                        onPress={() => setShowStartDatePicker(true)}
+                    />
+                    <TimeInput
+                        label="Time"
+                        value={formatTime(startTime)}
+                        onPress={() => setShowStartTimePicker(true)}
+                    />
+                </View>
+
+                {/* --- END DATE & TIME --- */}
+                <Text style={styles.sectionLabel}>End of Event</Text>
+                <View style={styles.dateTimeRow}>
+                    <DateInput
+                        label="Date"
+                        value={formatDate(endDate)}
+                        onPress={() => setShowEndDatePicker(true)}
+                    />
+                    <TimeInput
+                        label="Time"
+                        value={formatTime(endTime)}
+                        onPress={() => setShowEndTimePicker(true)}
+                    />
+                </View>
+
+                {/* --- PICKERS (INVISIBLE) --- */}
+                {showStartDatePicker && (
+                    <DateTimePicker value={startDate} mode="date" display="default" onChange={onChangeStartDate} />
                 )}
-            </TouchableOpacity>
-
-            {/* Input Nama */}
-            <Text style={styles.inputLabel}>Name of Event</Text>
-            <TextInput
-                style={styles.textInput}
-                placeholder="Event Name"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                value={eventName}
-                onChangeText={setEventName}
-            />
-
-            {/* Input Lokasi */}
-            <Text style={styles.inputLabel}>Location</Text>
-            <TextInput
-                style={styles.textInput}
-                placeholder="Location"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                value={location}
-                onChangeText={setLocation}
-            />
-
-            {/* --- START DATE & TIME --- */}
-            <Text style={styles.sectionLabel}>Start of Event</Text>
-            <View style={styles.dateTimeRow}>
-                <DateInput
-                    label="Date"
-                    value={formatDate(startDate)}
-                    onPress={() => setShowStartDatePicker(true)}
-                />
-                <TimeInput
-                    label="Time"
-                    value={formatTime(startTime)}
-                    onPress={() => setShowStartTimePicker(true)}
-                />
-            </View>
-
-            {/* --- END DATE & TIME --- */}
-            <Text style={styles.sectionLabel}>End of Event</Text>
-            <View style={styles.dateTimeRow}>
-                <DateInput
-                    label="Date"
-                    value={formatDate(endDate)}
-                    onPress={() => setShowEndDatePicker(true)}
-                />
-                <TimeInput
-                    label="Time"
-                    value={formatTime(endTime)}
-                    onPress={() => setShowEndTimePicker(true)}
-                />
-            </View>
-
-            {/* --- PICKERS (INVISIBLE) --- */}
-            {showStartDatePicker && (
-                <DateTimePicker value={startDate} mode="date" display="default" onChange={onChangeStartDate} />
-            )}
-            {showStartTimePicker && (
-                <DateTimePicker value={startTime} mode="time" display="default" is24Hour={true} onChange={onChangeStartTime} />
-            )}
-            {showEndDatePicker && (
-                <DateTimePicker value={endDate} mode="date" display="default" onChange={onChangeEndDate} />
-            )}
-            {showEndTimePicker && (
-                <DateTimePicker value={endTime} mode="time" display="default" is24Hour={true} onChange={onChangeEndTime} />
-            )}
-
-
-            {/* Deskripsi */}
-            <Text style={styles.inputLabel}>Description</Text>
-            <TextInput
-                style={[styles.textInput, styles.descriptionInput]}
-                placeholder="Enter event description"
-                placeholderTextColor={PLACEHOLDER_COLOR}
-                value={description}
-                onChangeText={setDescription}
-                multiline={true}
-                textAlignVertical="top"
-            />
-
-            {/* Tombol Update */}
-            <TouchableOpacity
-                style={styles.createButton}
-                onPress={handleUpdate}
-                disabled={loading}
-            >
-                {loading ? (
-                    <ActivityIndicator color={WHITE_COLOR} />
-                ) : (
-                    <Text style={styles.createButtonText}>Update</Text>
+                {showStartTimePicker && (
+                    <DateTimePicker value={startTime} mode="time" display="default" is24Hour={true} onChange={onChangeStartTime} />
                 )}
-            </TouchableOpacity>
+                {showEndDatePicker && (
+                    <DateTimePicker value={endDate} mode="date" display="default" onChange={onChangeEndDate} />
+                )}
+                {showEndTimePicker && (
+                    <DateTimePicker value={endTime} mode="time" display="default" is24Hour={true} onChange={onChangeEndTime} />
+                )}
 
-            <View style={{ height: 80 }} />
 
-        </ScrollView>
+                {/* Deskripsi */}
+                <Text style={styles.inputLabel}>Description</Text>
+                <TextInput
+                    style={[styles.textInput, styles.descriptionInput]}
+                    placeholder="Enter event description"
+                    placeholderTextColor={PLACEHOLDER_COLOR}
+                    value={description}
+                    onChangeText={setDescription}
+                    multiline={true}
+                    textAlignVertical="top"
+                />
+
+                {/* Tombol Update */}
+                <TouchableOpacity
+                    style={styles.createButton}
+                    onPress={handleUpdate}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <ActivityIndicator color={WHITE_COLOR} />
+                    ) : (
+                        <Text style={styles.createButtonText}>Update</Text>
+                    )}
+                </TouchableOpacity>
+
+                <View style={{ height: 120 }} />
+
+            </ScrollView>
+        </SafeAreaView>
     );
 }
 

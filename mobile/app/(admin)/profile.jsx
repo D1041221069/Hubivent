@@ -1,6 +1,7 @@
 // app/(admin)/profile.jsx
 import { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 // Ganti library ke Feather
 import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../../src/contexts/authContext';
@@ -64,89 +65,91 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
-      {/* 1. Header Profil */}
-      <View style={styles.header}>
-        <View style={styles.profileImageContainer}>
-          <Image source={{ uri: PROFILE_IMAGE }} style={styles.profileImage} />
-          <TouchableOpacity style={styles.editIconBadge}>
-            {/* Icon Edit menggunakan Feather */}
-            <Feather name="edit-2" size={16} color="#FFF" />
-          </TouchableOpacity>
+        {/* 1. Header Profil */}
+        <View style={styles.header}>
+          <View style={styles.profileImageContainer}>
+            <Image source={{ uri: PROFILE_IMAGE }} style={styles.profileImage} />
+            <TouchableOpacity style={styles.editIconBadge}>
+              {/* Icon Edit menggunakan Feather */}
+              <Feather name="edit-2" size={16} color="#FFF" />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.userName}>{user?.name || 'Admin'}</Text>
+          <Text style={styles.userRole}>{user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Administrator'}</Text>
         </View>
-        <Text style={styles.userName}>{user?.name || 'Admin'}</Text>
-        <Text style={styles.userRole}>{user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Administrator'}</Text>
-      </View>
 
-      {/* 2. Statistik Admin */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>24</Text>
-          <Text style={styles.statLabel}>Events</Text>
+        {/* 2. Statistik Admin */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>24</Text>
+            <Text style={styles.statLabel}>Events</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>1.2k</Text>
+            <Text style={styles.statLabel}>Followers</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>4.8</Text>
+            <Text style={styles.statLabel}>Rating</Text>
+          </View>
         </View>
-        <View style={styles.statDivider} />
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>1.2k</Text>
-          <Text style={styles.statLabel}>Followers</Text>
+
+        {/* 3. Menu Settings */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Account Settings</Text>
+
+          {/* Icon mapping ke Feather */}
+          <MenuItem
+            icon="user"
+            label="Edit Profile"
+            onPress={() => console.log('Edit Profile')}
+          />
+          <MenuItem
+            icon="lock"
+            label="Change Password"
+            onPress={() => console.log('Change Pass')}
+          />
+          <MenuItem
+            icon="bell"
+            label="Notifications"
+            hasSwitch={true}
+            switchValue={isNotificationOn}
+            onSwitchChange={setNotificationOn}
+          />
         </View>
-        <View style={styles.statDivider} />
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>4.8</Text>
-          <Text style={styles.statLabel}>Rating</Text>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>General</Text>
+
+          <MenuItem
+            icon="shield"
+            label="Privacy Policy"
+            onPress={() => console.log('Privacy')}
+          />
+          <MenuItem
+            icon="help-circle"
+            label="Help Center"
+            onPress={() => console.log('Help')}
+          />
         </View>
-      </View>
 
-      {/* 3. Menu Settings */}
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Account Settings</Text>
+        {/* 4. Tombol Logout */}
+        <View style={[styles.sectionContainer, { marginBottom: 100 }]}>
+          <MenuItem
+            icon="log-out"
+            label="Log Out"
+            isDestructive={true}
+            onPress={handleLogout}
+          />
+        </View>
 
-        {/* Icon mapping ke Feather */}
-        <MenuItem
-          icon="user"
-          label="Edit Profile"
-          onPress={() => console.log('Edit Profile')}
-        />
-        <MenuItem
-          icon="lock"
-          label="Change Password"
-          onPress={() => console.log('Change Pass')}
-        />
-        <MenuItem
-          icon="bell"
-          label="Notifications"
-          hasSwitch={true}
-          switchValue={isNotificationOn}
-          onSwitchChange={setNotificationOn}
-        />
-      </View>
-
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>General</Text>
-
-        <MenuItem
-          icon="shield"
-          label="Privacy Policy"
-          onPress={() => console.log('Privacy')}
-        />
-        <MenuItem
-          icon="help-circle"
-          label="Help Center"
-          onPress={() => console.log('Help')}
-        />
-      </View>
-
-      {/* 4. Tombol Logout */}
-      <View style={[styles.sectionContainer, { marginBottom: 100 }]}>
-        <MenuItem
-          icon="log-out"
-          label="Log Out"
-          isDestructive={true}
-          onPress={handleLogout}
-        />
-      </View>
-
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

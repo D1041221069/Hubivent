@@ -1,6 +1,7 @@
 // app/(admin)/_layout.jsx
 import { Tabs } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 
 // Warna utama
@@ -63,8 +64,8 @@ export default function AdminLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: PRIMARY_COLOR,
-    height: 70,
     borderTopWidth: 0,
+    height: useSafeAreaInsets.bottom,
     position: 'absolute',
     bottom: 0,
     left: 0,

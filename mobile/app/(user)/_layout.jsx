@@ -1,17 +1,16 @@
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../../src/contexts/authContext';
 import { SearchProvider, useSearch } from '../../src/contexts/SearchContext';
-import { Alert } from 'react-native';
 
 function CustomHeader() {
     const { logout } = useAuth();
     const { searchQuery, setSearchQuery } = useSearch();
 
     return (
-        <SafeAreaView edges={['top']} style={{ backgroundColor: '#fff' }}>
+        <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
             <View style={styles.topHeader}>
                 <View style={styles.searchBar}>
                     <Feather name="search" size={20} color="#999" style={{ marginRight: 10 }} />
@@ -44,41 +43,37 @@ function CustomHeader() {
 }
 
 export default function Layout() {
+    const insets = useSafeAreaInsets();
     return (
         <SearchProvider>
             <Tabs
                 screenOptions={{
                     header: () => <CustomHeader />,
-                    tabBarStyle: styles.bottomNav,
+                    tabBarStyle: {
+                        ...styles.bottomNav,
+                        height: 40 + insets.bottom,
+                        paddingBottom: insets.bottom + 5,
+                    },
                     tabBarShowLabel: false,
                     tabBarActiveTintColor: '#000',
                     tabBarInactiveTintColor: '#999',
-                }}
-            >
+                }}>
                 <Tabs.Screen
                     name="index"
-                    options={{
-                        tabBarIcon: ({ color }) => <Feather name="home" size={24} color={color} />,
-                    }}
-                />
+                    options={{ tabBarIcon: ({ color }) => <Feather name="home" size={24} color={color} /> }} />
                 <Tabs.Screen
                     name="feedback"
-                    options={{
-                        tabBarIcon: ({ color }) => <Feather name="check-square" size={24} color={color} />,
-                    }}
-                />
+                    options={{ tabBarIcon: ({ color }) => <Feather name="check-square" size={24} color={color} /> }} />
                 <Tabs.Screen
                     name="saved"
-                    options={{
-                        tabBarIcon: ({ color }) => <Feather name="bookmark" size={24} color={color} />,
-                    }}
-                />
+                    options={{ tabBarIcon: ({ color }) => <Feather name="bookmark" size={24} color={color} /> }} />
                 <Tabs.Screen
-                    name="logout"
+                    name="event-detail"
                     options={{
                         href: null,
-                    }}
-                />
+                        tabBarStyle: { display: 'none' }, // Completely hide tab bar
+                        headerShown: false,
+                    }} />
             </Tabs>
         </SearchProvider>
     );
@@ -104,10 +99,8 @@ const styles = StyleSheet.create({
     },
     searchInput: { flex: 1, fontSize: 16, color: '#333' },
     bottomNav: {
-        height: 70,
         backgroundColor: '#fff',
         borderTopWidth: 1,
         borderTopColor: '#eee',
-        paddingBottom: 10,
     },
 });
